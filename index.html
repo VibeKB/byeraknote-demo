@@ -513,7 +513,7 @@
         <button class="action-btn answer" id="answer-btn" onclick="toggleAnswer()">정답보기</button>
         <button class="action-btn nav" id="prev-btn" onclick="prevNote()">‹</button>
         <button class="action-btn nav" id="next-btn" onclick="nextNote()">›</button>
-        <button class="action-btn delete" id="delete-btn" onclick="deleteCurrentNote()" style="display: none;">🗑️</button>
+        <button class="action-btn delete" id="delete-btn" onclick="deleteCurrentNote()" style="display: none;">오답삭제</button>
       </div>
     </div>
     <button class="btn secondary back-btn" onclick="showScreen('main')">← 뒤로가기</button>
@@ -544,11 +544,120 @@
       }
     }
 
-    // 오답노트 저장 (로컬 배열)
+    // 오답노트 저장 (IndexedDB)
     let notes = [];
     let currentNoteIdx = 0;
     let currentImageData = null;
     let isAnswerVisible = false;
+    
+    // IndexedDB 설정
+    let db;
+    const dbName = 'ByerakNoteDB';
+    const dbVersion = 1;
+    const storeName = 'notes';
+
+    // IndexedDB 초기화
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(dbName, dbVersion);
+        
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => {
+          db = request.result;
+          resolve(db);
+        };
+        
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains(storeName)) {
+            const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
+            store.createIndex('date', 'date', { unique: false });
+          }
+        };
+      });
+    }
+
+    // IndexedDB에 노트 저장
+    async function saveNoteToDB(note) {
+      if (!db) await initDB();
+      
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction([storeName], 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const request = store.add(note);
+        
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    // IndexedDB에서 모든 노트 가져오기
+    async function getAllNotesFromDB() {
+      if (!db) await initDB();
+      
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction([storeName], 'readonly');
+        const store = transaction.objectStore(storeName);
+        const request = store.getAll();
+        
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    // IndexedDB에서 노트 삭제
+    async function deleteNoteFromDB(id) {
+      if (!db) await initDB();
+      
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction([storeName], 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const request = store.delete(id);
+        
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    // 저장소 용량 계산 (IndexedDB)
+    async function getStorageSize() {
+      if (!db) await initDB();
+      
+      return new Promise((resolve) => {
+        const transaction = db.transaction([storeName], 'readonly');
+        const store = transaction.objectStore(storeName);
+        const request = store.getAll();
+        
+        request.onsuccess = () => {
+          let totalSize = 0;
+          request.result.forEach(note => {
+            totalSize += note.img.length + note.desc.length;
+          });
+          resolve(totalSize);
+        };
+      });
+    }
+
+    // 기존 localStorage에서 IndexedDB로 마이그레이션
+    async function migrateFromLocalStorage() {
+      try {
+        const savedNotes = localStorage.getItem('byerakNotes');
+        if (savedNotes) {
+          const oldNotes = JSON.parse(savedNotes);
+          if (oldNotes.length > 0) {
+            // IndexedDB에 저장
+            for (const note of oldNotes) {
+              await saveNoteToDB(note);
+            }
+            // localStorage 삭제
+            localStorage.removeItem('byerakNotes');
+            console.log('마이그레이션 완료:', oldNotes.length, '개 노트');
+          }
+        }
+      } catch (e) {
+        console.error('마이그레이션 오류:', e);
+      }
+    }
     
     function resetAddForm() {
       document.getElementById('img-input').value = '';
@@ -558,7 +667,7 @@
       currentImageData = null;
     }
     
-    function saveNote() {
+    async function saveNote() {
       const desc = document.getElementById('desc-input').value.trim();
       
       if (!currentImageData || !desc) {
@@ -566,28 +675,29 @@
         return;
       }
       
-      // 저장소 용량 체크
-      const currentSize = getStorageSize();
-      const newNoteSize = currentImageData.length * 0.75; // Base64 크기 추정
+      // 저장소 용량 체크 (100MB로 확장)
+      const currentSize = await getStorageSize();
+      const newNoteSize = currentImageData.length;
       
-      if (currentSize + newNoteSize > 5 * 1024 * 1024) { // 5MB 제한
+      if (currentSize + newNoteSize > 100 * 1024 * 1024) { // 100MB 제한
         alert('저장소 용량이 부족합니다. 일부 오답노트를 삭제해주세요.');
         return;
       }
       
-      notes.push({ 
+      const newNote = { 
         img: currentImageData, 
         desc: desc,
         date: new Date().toISOString()
-      });
+      };
       
-      // 로컬스토리지에 저장
       try {
-        localStorage.setItem('byerakNotes', JSON.stringify(notes));
+        await saveNoteToDB(newNote);
+        notes.push(newNote);
         alert('오답노트가 저장되었습니다!');
         showScreen('main');
       } catch (e) {
-        alert('저장 중 오류가 발생했습니다. 저장소 용량을 확인해주세요.');
+        alert('저장 중 오류가 발생했습니다.');
+        console.error('저장 오류:', e);
       }
     }
 
@@ -618,7 +728,7 @@
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
           
-          // 최대 크기 설정
+          // 최대 크기 설정 (화질 개선)
           const maxWidth = 1200;
           const maxHeight = 900;
           let { width, height } = img;
@@ -640,7 +750,7 @@
           
           ctx.drawImage(img, 0, 0, width, height);
           
-          // 압축된 이미지를 Base64로 변환
+          // 원본 품질 유지 (최고 화질)
           const compressedData = canvas.toDataURL('image/jpeg', 1.0);
           currentImageData = compressedData;
           
@@ -752,15 +862,15 @@
     }
 
     // 삭제 기능
-    function deleteCurrentNote() {
+    async function deleteCurrentNote() {
       if (notes.length === 0) return;
       
       if (confirm('이 오답노트를 삭제하시겠습니까?')) {
-        notes.splice(currentNoteIdx, 1);
+        const noteToDelete = notes[currentNoteIdx];
         
-        // 로컬스토리지 업데이트
         try {
-          localStorage.setItem('byerakNotes', JSON.stringify(notes));
+          await deleteNoteFromDB(noteToDelete.id);
+          notes.splice(currentNoteIdx, 1);
           
           if (notes.length === 0) {
             // 모든 노트가 삭제된 경우
@@ -776,6 +886,7 @@
           alert('오답노트가 삭제되었습니다.');
         } catch (e) {
           alert('삭제 중 오류가 발생했습니다.');
+          console.error('삭제 오류:', e);
         }
       }
     }
@@ -841,24 +952,19 @@
       document.getElementById('delete-hint').classList.remove('show');
     });
 
-    // 저장소 용량 계산
-    function getStorageSize() {
-      let size = 0;
-      for (let key in localStorage) {
-        if (localStorage.hasOwnProperty(key)) {
-          size += localStorage[key].length;
-        }
-      }
-      return size;
-    }
-
     // 페이지 로드 시 저장된 데이터 불러오기
-    window.addEventListener('load', function() {
+    window.addEventListener('load', async function() {
       try {
-        const savedNotes = localStorage.getItem('byerakNotes');
-        if (savedNotes) {
-          notes = JSON.parse(savedNotes);
-        }
+        // IndexedDB 초기화
+        await initDB();
+        
+        // 기존 localStorage 데이터 마이그레이션
+        await migrateFromLocalStorage();
+        
+        // IndexedDB에서 데이터 불러오기
+        notes = await getAllNotesFromDB();
+        
+        console.log('데이터 로드 완료:', notes.length, '개 노트');
       } catch (e) {
         console.error('저장된 데이터를 불러오는 중 오류:', e);
         notes = [];
@@ -867,5 +973,3 @@
   </script>
 </body>
 </html>
-
-
