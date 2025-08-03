@@ -6,7 +6,20 @@
   <meta name="theme-color" content="#ffc107">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>벼락치기오답노트 데모</title>
+  <meta name="apple-mobile-web-app-title" content="벼락치기오답노트">
+  <meta name="description" content="빠르게 정리하는 나만의 오답노트 - 학습 효율을 높이는 스마트 오답노트 앱">
+  <meta name="keywords" content="오답노트,학습,교육,시험,벼락치기,학습도구">
+  <meta name="author" content="벼락치기오답노트">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="벼락치기오답노트">
+  <meta property="og:description" content="빠르게 정리하는 나만의 오답노트">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourusername.github.io/byeraknote-demo">
+  <meta property="og:image" content="https://yourusername.github.io/byeraknote-demo/icon-512.png">
+  <title>벼락치기오답노트 - 스마트 오답노트 앱</title>
+  <link rel="manifest" href="manifest-twa.json">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <style>
     * { box-sizing: border-box; }
     body { 
@@ -16,6 +29,7 @@
       padding: 0;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
     }
     
     .container { 
@@ -77,6 +91,7 @@
       transition: all 0.2s ease;
       -webkit-tap-highlight-color: transparent;
       box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+      touch-action: manipulation;
     }
     
     .btn:active {
@@ -227,6 +242,7 @@
       cursor: pointer;
       transition: all 0.2s ease;
       -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
     
     .action-btn.answer {
@@ -468,6 +484,16 @@
       
       .note-img {
         max-height: 350px;
+      }
+    }
+    
+    /* TWA 최적화 */
+    @media (display-mode: standalone) {
+      body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
       }
     }
   </style>
@@ -951,6 +977,19 @@
       document.getElementById('note-img').classList.remove('swipe-to-delete');
       document.getElementById('delete-hint').classList.remove('show');
     });
+
+    // PWA 서비스 워커 등록
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('SW 등록 성공:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('SW 등록 실패:', error);
+          });
+      });
+    }
 
     // 페이지 로드 시 저장된 데이터 불러오기
     window.addEventListener('load', async function() {
