@@ -300,9 +300,9 @@
     }
     
     .empty-icon {
-      font-size: 4rem;
+      font-size: 5rem;
       color: #ddd;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
     
     .back-btn {
@@ -899,25 +899,28 @@
       
       debugLog('노트 표시 시작', { idx, totalNotes: notes.length });
       
-      if (notes.length === 0) {
-        // 디폴트 이미지와 메시지 표시
-        noteImg.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjhmOWZhIi8+CjxwYXRoIGQ9Ik0xMDAgNTBDMTI3LjYxNCA1MCAxNTAgNzIuMzg2IDE1MCAxMDBDMTUwIDEyNy42MTQgMTI3LjYxNCAxNTAgMTAwIDE1MEM3Mi4zODYgMTUwIDUwIDEyNy42MTQgNTAgMTAwQzUwIDcyLjM4NiA3Mi4zODYgNTAgMTAwIDUwWiIgZmlsbD0iI2RkZCIvPgo8cGF0aCBkPSJNODAgODBIMTIwVjEyMEg4MFY4MFoiIGZpbGw9IiNlZWUiLz4KPHN2ZyB4PSI4MCIgeT0iODAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJDMiAxNy41MiA2LjQ4IDIyIDEyIDIyQzE3LjUyIDIyIDIyIDE3LjUyIDIyIDEyQzIyIDYuNDggMTcuNTIgMiAxMiAyWk0xMyAxN0gxMVYxNUgxM1YxN1pNMTMgMTNIMTFWN0gxM1YxM1oiIGZpbGw9IiNjY2MiLz4KPC9zdmc+Cjwvc3ZnPgo=';
-        noteImg.style.cursor = 'default';
-        noteImg.onclick = null; // 클릭 이벤트 제거
-        
-        noteDesc.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">📚</div>
-            <div>등록된 오답이 없습니다</div>
-            <div style="margin-top: 10px; font-size: 0.9rem; color: #999;">
-              오답 등록하기에서 먼저 추가해보세요!
+              if (notes.length === 0) {
+          // 빈 상태 화면 표시
+          noteImg.style.display = 'none';
+          
+          noteDesc.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📖</div>
+              <div style="font-size: 1.2rem; font-weight: 600; color: #333; margin-bottom: 8px;">
+                등록된 오답노트가 없습니다
+              </div>
+              <div style="font-size: 0.9rem; color: #666; margin-bottom: 30px;">
+                오답노트를 추가하여 오답을 관리해 보세요
+              </div>
+              <button class="btn" onclick="showScreen('add')" style="margin-bottom: 15px;">
+                오답등록하기
+              </button>
+              <button class="btn secondary" onclick="showScreen('main')">
+                뒤로가기
+              </button>
             </div>
-            <button class="btn" style="margin-top: 20px;" onclick="showScreen('add')">
-              오답 등록하기
-            </button>
-          </div>
-        `;
-        noteDesc.classList.remove('hidden');
+          `;
+          noteDesc.classList.remove('hidden');
         
         document.getElementById('prev-btn').disabled = true;
         document.getElementById('next-btn').disabled = true;
@@ -934,10 +937,11 @@
       const currentNote = notes[idx];
       debugLog('현재 노트 정보', { id: currentNote.id, index: idx });
       
-      // 실제 노트 이미지 표시
-      noteImg.src = currentNote.img;
-      noteImg.style.cursor = 'pointer';
-      noteImg.onclick = openImageModal; // 클릭 이벤트 복원
+              // 실제 노트 이미지 표시
+        noteImg.src = currentNote.img;
+        noteImg.style.display = 'block';
+        noteImg.style.cursor = 'pointer';
+        noteImg.onclick = openImageModal; // 클릭 이벤트 복원
       
       noteDesc.innerText = currentNote.desc;
       noteDesc.classList.add('hidden');
@@ -1146,4 +1150,4 @@
     });
   </script>
 </body>
-</html>
+</html> 
