@@ -619,7 +619,7 @@
           const ctx = canvas.getContext('2d');
           
           // 최대 크기 설정
-          const maxWidth = 800;
+          const maxWidth = 1000;
           const maxHeight = 600;
           let { width, height } = img;
           
@@ -641,7 +641,7 @@
           ctx.drawImage(img, 0, 0, width, height);
           
           // 압축된 이미지를 Base64로 변환
-          const compressedData = canvas.toDataURL('image/jpeg', 0.7);
+          const compressedData = canvas.toDataURL('image/jpeg', 0.9);
           currentImageData = compressedData;
           
           // 미리보기 표시
@@ -867,3 +867,4 @@
   </script>
 </body>
 </html>
+
