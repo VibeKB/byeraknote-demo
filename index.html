@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#ffc107">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>벼락치기오답노트 데모 (디버그 수정)</title>
+  <title>벼락치기오답노트 데모 (수정됨)</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="icon-192.png">
   <style>
@@ -43,6 +43,7 @@
     .logo-container {
       text-align: center;
       margin-bottom: 30px;
+      position: relative;
     }
     
     .logo-icon {
@@ -63,6 +64,25 @@
       font-size: 1rem;
       color: #666;
       margin-bottom: 40px;
+    }
+    
+    .settings-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #666;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+    
+    .settings-btn:active {
+      background: rgba(0, 0, 0, 0.1);
+      transform: scale(0.9);
     }
     
     .btn { 
@@ -276,6 +296,13 @@
       color: #666;
       font-size: 1.1rem;
       line-height: 1.5;
+      margin-top: 20px;
+    }
+    
+    .empty-icon {
+      font-size: 4rem;
+      color: #ddd;
+      margin-bottom: 20px;
     }
     
     .back-btn {
@@ -300,18 +327,106 @@
       margin-top: 4px;
     }
     
-    /* 디버그 정보 */
-    .debug-info {
+    /* 설정 메뉴 */
+    .settings-menu {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .settings-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .settings-item:last-child {
+      border-bottom: none;
+    }
+    
+    .settings-item .label {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .settings-item .value {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .settings-item .btn-small {
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      border-radius: 6px;
+    }
+    
+    /* 이미지 확대 모달 */
+    .image-modal {
       position: fixed;
-      top: 10px;
-      left: 10px;
-      background: rgba(0, 0, 0, 0.8);
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      font-size: 12px;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
       z-index: 1000;
-      max-width: 300px;
+      cursor: pointer;
+    }
+    
+    .image-modal.show {
+      display: flex;
+    }
+    
+    .modal-image {
+      max-width: 95%;
+      max-height: 95%;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .modal-close:active {
+      transform: scale(0.9);
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .image-hint {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .image-hint.show {
+      opacity: 1;
     }
     
     /* 반응형 디자인 */
@@ -359,18 +474,12 @@
   </style>
 </head>
 <body>
-  <!-- 디버그 정보 표시 -->
-  <div class="debug-info" id="debug-info">
-    <div>노트 수: <span id="note-count">0</span></div>
-    <div>현재 인덱스: <span id="current-index">0</span></div>
-    <div>DB 상태: <span id="db-status">초기화 중...</span></div>
-  </div>
-
   <div class="container" id="main-screen">
     <div class="logo-container">
       <div class="logo-icon">⚡</div>
       <div class="main-title">벼락치기오답노트</div>
       <div class="subtitle">빠르게 정리하는 나만의 오답노트</div>
+      <button class="settings-btn" onclick="showScreen('settings')">⚙️</button>
     </div>
     <button class="btn" onclick="showScreen('add')">오답 등록하기</button>
     <button class="btn" onclick="showScreen('view')">오답노트 보기</button>
@@ -400,13 +509,31 @@
           <img id="note-img" class="note-img" src="" alt="오답 이미지" onclick="openImageModal()" />
           <div id="note-desc" class="note-desc hidden"></div>
         </div>
-        <div class="delete-hint" id="delete-hint">위로 스와이프하여 삭제</div>
       </div>
       <div class="action-buttons">
         <button class="action-btn answer" id="answer-btn" onclick="toggleAnswer()">정답보기</button>
         <button class="action-btn nav" id="prev-btn" onclick="prevNote()">‹</button>
         <button class="action-btn nav" id="next-btn" onclick="nextNote()">›</button>
         <button class="action-btn delete" id="delete-btn" onclick="deleteCurrentNote()" style="display: none;">오답삭제</button>
+      </div>
+    </div>
+    <button class="btn secondary back-btn" onclick="showScreen('main')">← 뒤로가기</button>
+  </div>
+
+  <div class="container hidden" id="settings-screen">
+    <div class="title">설정</div>
+    <div class="settings-menu">
+      <div class="settings-item">
+        <span class="label">📊 디버그 정보</span>
+        <span class="value" id="debug-info">로딩 중...</span>
+      </div>
+      <div class="settings-item">
+        <span class="label">🗑️ 모든 데이터 삭제</span>
+        <button class="btn btn-small danger" onclick="deleteAllData()">삭제</button>
+      </div>
+      <div class="settings-item">
+        <span class="label">ℹ️ 앱 정보</span>
+        <span class="value">v2.0</span>
       </div>
     </div>
     <button class="btn secondary back-btn" onclick="showScreen('main')">← 뒤로가기</button>
@@ -428,9 +555,10 @@
 
     // 디버그 정보 업데이트
     function updateDebugInfo() {
-      document.getElementById('note-count').textContent = notes.length;
-      document.getElementById('current-index').textContent = currentNoteIdx;
-      document.getElementById('db-status').textContent = db ? '연결됨' : '연결 안됨';
+      const debugInfo = document.getElementById('debug-info');
+      if (debugInfo) {
+        debugInfo.textContent = `노트 ${notes.length}개, DB: ${db ? '연결됨' : '연결 안됨'}`;
+      }
     }
 
     // 화면 전환
@@ -438,6 +566,7 @@
       document.getElementById('main-screen').classList.add('hidden');
       document.getElementById('add-screen').classList.add('hidden');
       document.getElementById('view-screen').classList.add('hidden');
+      document.getElementById('settings-screen').classList.add('hidden');
       
       if (screen === 'main') {
         document.getElementById('main-screen').classList.remove('hidden');
@@ -447,6 +576,9 @@
       } else if (screen === 'view') {
         document.getElementById('view-screen').classList.remove('hidden');
         showNote(currentNoteIdx);
+      } else if (screen === 'settings') {
+        document.getElementById('settings-screen').classList.remove('hidden');
+        updateDebugInfo();
       }
     }
 
@@ -564,6 +696,29 @@
           reject(request.error);
         };
       });
+    }
+
+    // 모든 데이터 삭제
+    async function deleteAllData() {
+      if (confirm('모든 오답노트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+        try {
+          if (!db) await initDB();
+          
+          const transaction = db.transaction([storeName], 'readwrite');
+          const store = transaction.objectStore(storeName);
+          const request = store.clear();
+          
+          request.onsuccess = () => {
+            notes = [];
+            currentNoteIdx = 0;
+            alert('모든 데이터가 삭제되었습니다.');
+            showScreen('main');
+          };
+        } catch (e) {
+          alert('삭제 중 오류가 발생했습니다.');
+          console.error('전체 삭제 오류:', e);
+        }
+      }
     }
 
     // 저장소 용량 계산 (IndexedDB)
@@ -739,17 +894,36 @@
     function showNote(idx) {
       const deleteBtn = document.getElementById('delete-btn');
       const answerBtn = document.getElementById('answer-btn');
+      const noteImg = document.getElementById('note-img');
+      const noteDesc = document.getElementById('note-desc');
       
       debugLog('노트 표시 시작', { idx, totalNotes: notes.length });
       
       if (notes.length === 0) {
-        document.getElementById('note-img').src = '';
-        document.getElementById('note-desc').innerHTML = '<div class="empty-state">등록된 오답노트가 없습니다.<br>오답 등록하기에서 먼저 추가해보세요!</div>';
+        // 디폴트 이미지와 메시지 표시
+        noteImg.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjhmOWZhIi8+CjxwYXRoIGQ9Ik0xMDAgNTBDMTI3LjYxNCA1MCAxNTAgNzIuMzg2IDE1MCAxMDBDMTUwIDEyNy42MTQgMTI3LjYxNCAxNTAgMTAwIDE1MEM3Mi4zODYgMTUwIDUwIDEyNy42MTQgNTAgMTAwQzUwIDcyLjM4NiA3Mi4zODYgNTAgMTAwIDUwWiIgZmlsbD0iI2RkZCIvPgo8cGF0aCBkPSJNODAgODBIMTIwVjEyMEg4MFY4MFoiIGZpbGw9IiNlZWUiLz4KPHN2ZyB4PSI4MCIgeT0iODAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJDMiAxNy41MiA2LjQ4IDIyIDEyIDIyQzE3LjUyIDIyIDIyIDE3LjUyIDIyIDEyQzIyIDYuNDggMTcuNTIgMiAxMiAyWk0xMyAxN0gxMVYxNUgxM1YxN1pNMTMgMTNIMTFWN0gxM1YxM1oiIGZpbGw9IiNjY2MiLz4KPC9zdmc+Cjwvc3ZnPgo=';
+        noteImg.style.cursor = 'default';
+        noteImg.onclick = null; // 클릭 이벤트 제거
+        
+        noteDesc.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📚</div>
+            <div>등록된 오답이 없습니다</div>
+            <div style="margin-top: 10px; font-size: 0.9rem; color: #999;">
+              오답 등록하기에서 먼저 추가해보세요!
+            </div>
+            <button class="btn" style="margin-top: 20px;" onclick="showScreen('add')">
+              오답 등록하기
+            </button>
+          </div>
+        `;
+        noteDesc.classList.remove('hidden');
+        
         document.getElementById('prev-btn').disabled = true;
         document.getElementById('next-btn').disabled = true;
         deleteBtn.style.display = 'none';
         answerBtn.style.display = 'none';
-        debugLog('노트가 없음');
+        debugLog('노트가 없음 - 디폴트 화면 표시');
         return;
       }
       
@@ -760,8 +934,14 @@
       const currentNote = notes[idx];
       debugLog('현재 노트 정보', { id: currentNote.id, index: idx });
       
-      document.getElementById('note-img').src = currentNote.img;
-      document.getElementById('note-desc').innerText = currentNote.desc;
+      // 실제 노트 이미지 표시
+      noteImg.src = currentNote.img;
+      noteImg.style.cursor = 'pointer';
+      noteImg.onclick = openImageModal; // 클릭 이벤트 복원
+      
+      noteDesc.innerText = currentNote.desc;
+      noteDesc.classList.add('hidden');
+      
       document.getElementById('prev-btn').disabled = idx === 0;
       document.getElementById('next-btn').disabled = idx === notes.length - 1;
       
@@ -771,7 +951,6 @@
       
       // 정답보기 상태 초기화
       isAnswerVisible = false;
-      document.getElementById('note-desc').classList.add('hidden');
       answerBtn.textContent = '정답보기';
       
       debugLog('노트 표시 완료', { currentIndex: idx });
@@ -892,7 +1071,6 @@
       if (diffY > 50) {
         isSwiping = true;
         document.getElementById('note-img').classList.add('swipe-to-delete');
-        document.getElementById('delete-hint').classList.add('show');
       }
     });
     
@@ -908,7 +1086,6 @@
       if (isSwiping && diffY > 100) {
         deleteCurrentNote();
         document.getElementById('note-img').classList.remove('swipe-to-delete');
-        document.getElementById('delete-hint').classList.remove('show');
         return;
       }
       
@@ -929,7 +1106,6 @@
       
       // 스와이프 효과 제거
       document.getElementById('note-img').classList.remove('swipe-to-delete');
-      document.getElementById('delete-hint').classList.remove('show');
     });
 
     // PWA 서비스 워커 등록
