@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#2d6cdf">
+  <meta name="theme-color" content="#ffc107">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>벼락치기오답노트 데모</title>
@@ -34,8 +34,33 @@
       font-size: 1.8rem; 
       font-weight: bold; 
       margin-bottom: 40px; 
-      color: #2d6cdf;
+      color: #333;
       line-height: 1.2;
+    }
+    
+    .logo-container {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .logo-icon {
+      font-size: 3rem;
+      color: #ffc107;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+    }
+    
+    .main-title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 40px;
     }
     
     .btn { 
@@ -45,38 +70,47 @@
       font-size: 1.1rem; 
       border: none; 
       border-radius: 12px; 
-      background: #2d6cdf; 
-      color: #fff; 
+      background: #ffc107; 
+      color: #333; 
       cursor: pointer;
-      font-weight: 500;
+      font-weight: 600;
       transition: all 0.2s ease;
       -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
     }
     
     .btn:active {
       transform: scale(0.98);
-      background: #1e5bb8;
+      background: #ffb300;
+      box-shadow: 0 1px 4px rgba(255, 193, 7, 0.4);
     }
     
     .btn.secondary { 
       background: #6c757d; 
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
     }
     
     .btn.secondary:active {
       background: #5a6268;
+      box-shadow: 0 1px 4px rgba(108, 117, 125, 0.4);
     }
     
     .btn.danger {
       background: #dc3545;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
     }
     
     .btn.danger:active {
       background: #c82333;
+      box-shadow: 0 1px 4px rgba(220, 53, 69, 0.4);
     }
     
     .btn:disabled {
       background: #ccc;
       cursor: not-allowed;
+      box-shadow: none;
     }
     
     .hidden { display: none; }
@@ -115,8 +149,8 @@
     
     .input-group textarea:focus {
       outline: none;
-      border-color: #2d6cdf;
-      box-shadow: 0 0 0 3px rgba(45, 108, 223, 0.1);
+      border-color: #ffc107;
+      box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
     }
     
     .preview-img { 
@@ -139,13 +173,19 @@
     
     .note-img { 
       width: 100%; 
-      max-width: 350px; 
-      max-height: 250px; 
-      object-fit: cover; 
+      max-width: 100%; 
+      max-height: 400px; 
+      object-fit: contain; 
       border-radius: 12px; 
       background: #eee;
       border: 1px solid #ddd;
       transition: transform 0.3s ease;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .note-img:active {
+      transform: scale(0.98);
     }
     
     .note-desc { 
@@ -155,40 +195,78 @@
       line-height: 1.5;
       color: #333;
       padding: 0 10px;
+      width: 100%;
+      max-width: 500px;
+      transition: all 0.3s ease;
     }
     
-    .nav-arrows { 
-      margin-top: 30px; 
-      display: flex; 
-      justify-content: center; 
-      gap: 40px; 
+    .note-desc.hidden {
+      opacity: 0;
+      max-height: 0;
+      margin-top: 0;
+      overflow: hidden;
     }
     
-    .arrow-btn { 
-      font-size: 2.5rem; 
-      background: none; 
-      border: none; 
-      color: #2d6cdf; 
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 400px;
+      margin: 20px 0;
+      gap: 10px;
+    }
+    
+    .action-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
       cursor: pointer;
-      padding: 10px;
-      border-radius: 50%;
       transition: all 0.2s ease;
       -webkit-tap-highlight-color: transparent;
     }
     
-    .arrow-btn:active {
-      background: rgba(45, 108, 223, 0.1);
-      transform: scale(0.9);
+    .action-btn.answer {
+      background: #ffc107;
+      color: #333;
+      box-shadow: 0 2px 6px rgba(255, 193, 7, 0.3);
     }
     
-    .arrow-btn:disabled { 
-      color: #ccc; 
-      cursor: default;
+    .action-btn.answer:active {
+      background: #ffb300;
+      transform: scale(0.95);
     }
     
-    .arrow-btn:disabled:active {
-      background: none;
-      transform: none;
+    .action-btn.nav {
+      background: #ffc107;
+      color: #333;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 6px rgba(255, 193, 7, 0.3);
+    }
+    
+    .action-btn.nav:active {
+      background: #ffb300;
+      transform: scale(0.95);
+    }
+    
+    .action-btn.nav:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    
+    .action-btn.delete {
+      background: #dc3545;
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+    }
+    
+    .action-btn.delete:active {
+      background: #c82333;
+      transform: scale(0.95);
     }
     
     .empty-state {
@@ -279,6 +357,71 @@
       opacity: 0.7;
     }
     
+    /* 이미지 확대 모달 */
+    .image-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      cursor: pointer;
+    }
+    
+    .image-modal.show {
+      display: flex;
+    }
+    
+    .modal-image {
+      max-width: 95%;
+      max-height: 95%;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .modal-close:active {
+      transform: scale(0.9);
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .image-hint {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .image-hint.show {
+      opacity: 1;
+    }
+    
     /* 반응형 디자인 */
     @media (max-width: 480px) {
       .container {
@@ -290,17 +433,31 @@
         margin-bottom: 30px;
       }
       
+      .main-title {
+        font-size: 1.8rem;
+      }
+      
+      .logo-icon {
+        font-size: 2.5rem;
+      }
+      
       .btn {
         padding: 14px;
         font-size: 1rem;
       }
       
-      .nav-arrows {
-        gap: 30px;
+      .action-buttons {
+        max-width: 100%;
+        gap: 8px;
       }
       
-      .arrow-btn {
-        font-size: 2rem;
+      .action-btn {
+        padding: 10px;
+        font-size: 0.8rem;
+      }
+      
+      .action-btn.nav {
+        font-size: 1rem;
       }
       
       .delete-btn {
@@ -308,12 +465,20 @@
         height: 36px;
         font-size: 1rem;
       }
+      
+      .note-img {
+        max-height: 350px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container" id="main-screen">
-    <div class="title">벼락치기오답노트</div>
+    <div class="logo-container">
+      <div class="logo-icon">⚡</div>
+      <div class="main-title">벼락치기오답노트</div>
+      <div class="subtitle">빠르게 정리하는 나만의 오답노트</div>
+    </div>
     <button class="btn" onclick="showScreen('add')">오답 등록하기</button>
     <button class="btn" onclick="showScreen('view')">오답노트 보기</button>
   </div>
@@ -338,19 +503,27 @@
     <div class="title">오답노트 보기</div>
     <div class="note-viewer">
       <div class="note-container">
-        <button class="delete-btn" id="delete-btn" onclick="deleteCurrentNote()" style="display: none;">🗑️</button>
         <div class="swipe-area" id="swipe-area">
-          <img id="note-img" class="note-img" src="" alt="오답 이미지" />
-          <div id="note-desc" class="note-desc"></div>
+          <img id="note-img" class="note-img" src="" alt="오답 이미지" onclick="openImageModal()" />
+          <div id="note-desc" class="note-desc hidden"></div>
         </div>
         <div class="delete-hint" id="delete-hint">위로 스와이프하여 삭제</div>
       </div>
-      <div class="nav-arrows">
-        <button class="arrow-btn" id="prev-btn" onclick="prevNote()">‹</button>
-        <button class="arrow-btn" id="next-btn" onclick="nextNote()">›</button>
+      <div class="action-buttons">
+        <button class="action-btn answer" id="answer-btn" onclick="toggleAnswer()">정답보기</button>
+        <button class="action-btn nav" id="prev-btn" onclick="prevNote()">‹</button>
+        <button class="action-btn nav" id="next-btn" onclick="nextNote()">›</button>
+        <button class="action-btn delete" id="delete-btn" onclick="deleteCurrentNote()" style="display: none;">🗑️</button>
       </div>
     </div>
     <button class="btn secondary back-btn" onclick="showScreen('main')">← 뒤로가기</button>
+  </div>
+
+  <!-- 이미지 확대 모달 -->
+  <div class="image-modal" id="image-modal" onclick="closeImageModal()">
+    <button class="modal-close" onclick="closeImageModal()">✕</button>
+    <img id="modal-image" class="modal-image" src="" alt="확대된 이미지" />
+    <div class="image-hint" id="image-hint">확대된 이미지입니다</div>
   </div>
 
   <script>
@@ -375,6 +548,7 @@
     let notes = [];
     let currentNoteIdx = 0;
     let currentImageData = null;
+    let isAnswerVisible = false;
     
     function resetAddForm() {
       document.getElementById('img-input').value = '';
@@ -495,6 +669,7 @@
     // 오답노트 보기
     function showNote(idx) {
       const deleteBtn = document.getElementById('delete-btn');
+      const answerBtn = document.getElementById('answer-btn');
       
       if (notes.length === 0) {
         document.getElementById('note-img').src = '';
@@ -502,6 +677,7 @@
         document.getElementById('prev-btn').disabled = true;
         document.getElementById('next-btn').disabled = true;
         deleteBtn.style.display = 'none';
+        answerBtn.style.display = 'none';
         return;
       }
       
@@ -514,8 +690,14 @@
       document.getElementById('prev-btn').disabled = idx === 0;
       document.getElementById('next-btn').disabled = idx === notes.length - 1;
       
-      // 삭제 버튼 표시
+      // 버튼들 표시
       deleteBtn.style.display = 'block';
+      answerBtn.style.display = 'block';
+      
+      // 정답보기 상태 초기화
+      isAnswerVisible = false;
+      document.getElementById('note-desc').classList.add('hidden');
+      answerBtn.textContent = '정답보기';
     }
     
     function prevNote() { 
@@ -524,6 +706,49 @@
     
     function nextNote() { 
       showNote(currentNoteIdx + 1); 
+    }
+
+    // 정답보기 토글 기능
+    function toggleAnswer() {
+      if (notes.length === 0) return;
+      
+      const descElement = document.getElementById('note-desc');
+      const answerBtn = document.getElementById('answer-btn');
+      
+      isAnswerVisible = !isAnswerVisible;
+      
+      if (isAnswerVisible) {
+        descElement.classList.remove('hidden');
+        answerBtn.textContent = '정답숨기기';
+      } else {
+        descElement.classList.add('hidden');
+        answerBtn.textContent = '정답보기';
+      }
+    }
+
+    // 이미지 확대 모달 기능
+    function openImageModal() {
+      if (notes.length === 0) return;
+      
+      const modal = document.getElementById('image-modal');
+      const modalImage = document.getElementById('modal-image');
+      const hint = document.getElementById('image-hint');
+      
+      modalImage.src = notes[currentNoteIdx].img;
+      modal.classList.add('show');
+      
+      // 힌트 표시
+      setTimeout(() => {
+        hint.classList.add('show');
+        setTimeout(() => {
+          hint.classList.remove('show');
+        }, 2000);
+      }, 500);
+    }
+    
+    function closeImageModal() {
+      const modal = document.getElementById('image-modal');
+      modal.classList.remove('show');
     }
 
     // 삭제 기능
