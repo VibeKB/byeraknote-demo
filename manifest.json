@@ -1,0 +1,73 @@
+{
+  "name": "벼락치기오답노트",
+  "short_name": "벼락오답노트",
+  "description": "빠르게 정리하는 나만의 오답노트 - 학습 효율을 높이는 스마트 오답노트 앱",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffc107",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "ko",
+  "dir": "ltr",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "screenshot-2.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "오답 등록",
+      "short_name": "등록",
+      "description": "새로운 오답노트 등록",
+      "url": "/?action=add",
+      "icons": [
+        {
+          "src": "shortcut-add.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "오답노트 보기",
+      "short_name": "보기",
+      "description": "저장된 오답노트 확인",
+      "url": "/?action=view",
+      "icons": [
+        {
+          "src": "shortcut-view.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
