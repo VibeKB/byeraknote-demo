@@ -915,15 +915,13 @@
               <button class="btn" onclick="showScreen('add')" style="margin-bottom: 15px;">
                 오답등록하기
               </button>
-              <button class="btn secondary" onclick="showScreen('main')">
-                뒤로가기
-              </button>
             </div>
           `;
           noteDesc.classList.remove('hidden');
         
-        document.getElementById('prev-btn').disabled = true;
-        document.getElementById('next-btn').disabled = true;
+        // 모든 액션 버튼 숨기기
+        document.getElementById('prev-btn').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
         deleteBtn.style.display = 'none';
         answerBtn.style.display = 'none';
         debugLog('노트가 없음 - 디폴트 화면 표시');
@@ -937,15 +935,18 @@
       const currentNote = notes[idx];
       debugLog('현재 노트 정보', { id: currentNote.id, index: idx });
       
-              // 실제 노트 이미지 표시
-        noteImg.src = currentNote.img;
-        noteImg.style.display = 'block';
-        noteImg.style.cursor = 'pointer';
-        noteImg.onclick = openImageModal; // 클릭 이벤트 복원
+                    // 실제 노트 이미지 표시
+      noteImg.src = currentNote.img;
+      noteImg.style.display = 'block';
+      noteImg.style.cursor = 'pointer';
+      noteImg.onclick = openImageModal; // 클릭 이벤트 복원
       
       noteDesc.innerText = currentNote.desc;
       noteDesc.classList.add('hidden');
       
+      // 버튼들 표시 (노트가 있을 때만)
+      document.getElementById('prev-btn').style.display = 'block';
+      document.getElementById('next-btn').style.display = 'block';
       document.getElementById('prev-btn').disabled = idx === 0;
       document.getElementById('next-btn').disabled = idx === notes.length - 1;
       
