@@ -1,1155 +1,704 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#ffc107">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>벼락치기오답노트 데모 (수정됨)</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="icon-192.png">
-  <style>
-    * { box-sizing: border-box; }
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif; 
-      background: #f7f7f7; 
-      margin: 0; 
-      padding: 0;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    
-    .container { 
-      max-width: 100%; 
-      min-height: 100vh;
-      margin: 0 auto; 
-      background: #fff; 
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    
-    .title { 
-      text-align: center; 
-      font-size: 1.8rem; 
-      font-weight: bold; 
-      margin-bottom: 40px; 
-      color: #333;
-      line-height: 1.2;
-    }
-    
-    .logo-container {
-      text-align: center;
-      margin-bottom: 30px;
-      position: relative;
-    }
-    
-    .logo-icon {
-      font-size: 3rem;
-      color: #ffc107;
-      margin-bottom: 10px;
-      text-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
-    }
-    
-    .main-title {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 10px;
-    }
-    
-    .subtitle {
-      font-size: 1rem;
-      color: #666;
-      margin-bottom: 40px;
-    }
-    
-    .settings-btn {
-      position: absolute;
-      top: 0;
-      right: 0;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: #666;
-      cursor: pointer;
-      padding: 10px;
-      border-radius: 50%;
-      transition: all 0.2s ease;
-    }
-    
-    .settings-btn:active {
-      background: rgba(0, 0, 0, 0.1);
-      transform: scale(0.9);
-    }
-    
-    .btn { 
-      width: 100%; 
-      padding: 16px; 
-      margin: 12px 0; 
-      font-size: 1.1rem; 
-      border: none; 
-      border-radius: 12px; 
-      background: #ffc107; 
-      color: #333; 
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
-      box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
-    }
-    
-    .btn:active {
-      transform: scale(0.98);
-      background: #ffb300;
-      box-shadow: 0 1px 4px rgba(255, 193, 7, 0.4);
-    }
-    
-    .btn.secondary { 
-      background: #6c757d; 
-      color: #fff;
-      box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
-    }
-    
-    .btn.secondary:active {
-      background: #5a6268;
-      box-shadow: 0 1px 4px rgba(108, 117, 125, 0.4);
-    }
-    
-    .btn.danger {
-      background: #dc3545;
-      color: #fff;
-      box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
-    }
-    
-    .btn.danger:active {
-      background: #c82333;
-      box-shadow: 0 1px 4px rgba(220, 53, 69, 0.4);
-    }
-    
-    .btn:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-    
-    .hidden { display: none; }
-    
-    .input-group { 
-      margin-bottom: 20px; 
-    }
-    
-    .input-group label { 
-      display: block; 
-      margin-bottom: 8px; 
-      font-weight: 600;
-      color: #333;
-      font-size: 0.95rem;
-    }
-    
-    .input-group input[type="file"] { 
-      width: 100%;
-      padding: 12px;
-      border: 2px dashed #ddd;
-      border-radius: 8px;
-      background: #f8f9fa;
-      font-size: 0.9rem;
-    }
-    
-    .input-group textarea { 
-      width: 100%; 
-      min-height: 80px; 
-      border-radius: 8px; 
-      border: 1px solid #ddd; 
-      padding: 12px; 
-      font-size: 1rem;
-      font-family: inherit;
-      resize: vertical;
-    }
-    
-    .input-group textarea:focus {
-      outline: none;
-      border-color: #ffc107;
-      box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
-    }
-    
-    .preview-img { 
-      width: 100%; 
-      max-height: 250px; 
-      object-fit: cover; 
-      border-radius: 12px; 
-      margin-bottom: 16px; 
-      background: #eee;
-      border: 1px solid #ddd;
-    }
-    
-    .note-viewer { 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center;
-      min-height: 60vh;
-      justify-content: center;
-    }
-    
-    .note-img { 
-      width: 100%; 
-      max-width: 100%; 
-      max-height: 400px; 
-      object-fit: contain; 
-      border-radius: 12px; 
-      background: #eee;
-      border: 1px solid #ddd;
-      transition: transform 0.3s ease;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .note-img:active {
-      transform: scale(0.98);
-    }
-    
-    .note-desc { 
-      margin-top: 20px; 
-      font-size: 1.1rem; 
-      text-align: center;
-      line-height: 1.5;
-      color: #333;
-      padding: 0 10px;
-      width: 100%;
-      max-width: 500px;
-      transition: all 0.3s ease;
-    }
-    
-    .note-desc.hidden {
-      opacity: 0;
-      max-height: 0;
-      margin-top: 0;
-      overflow: hidden;
-    }
-    
-    .action-buttons {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      max-width: 400px;
-      margin: 20px 0;
-      gap: 10px;
-    }
-    
-    .action-btn {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    .action-btn.answer {
-      background: #ffc107;
-      color: #333;
-      box-shadow: 0 2px 6px rgba(255, 193, 7, 0.3);
-    }
-    
-    .action-btn.answer:active {
-      background: #ffb300;
-      transform: scale(0.95);
-    }
-    
-    .action-btn.nav {
-      background: #ffc107;
-      color: #333;
-      font-size: 1.2rem;
-      box-shadow: 0 2px 6px rgba(255, 193, 7, 0.3);
-    }
-    
-    .action-btn.nav:active {
-      background: #ffb300;
-      transform: scale(0.95);
-    }
-    
-    .action-btn.nav:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-    
-    .action-btn.delete {
-      background: #dc3545;
-      color: #fff;
-      box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
-    }
-    
-    .action-btn.delete:active {
-      background: #c82333;
-      transform: scale(0.95);
-    }
-    
-    .empty-state {
-      text-align: center;
-      color: #666;
-      font-size: 1.1rem;
-      line-height: 1.5;
-      margin-top: 20px;
-    }
-    
-    .empty-icon {
-      font-size: 5rem;
-      color: #ddd;
-      margin-bottom: 30px;
-    }
-    
-    .back-btn {
-      margin-top: 30px;
-    }
-    
-    .loading {
-      text-align: center;
-      color: #666;
-      font-size: 1rem;
-    }
-    
-    .error {
-      color: #dc3545;
-      font-size: 0.9rem;
-      margin-top: 8px;
-    }
-    
-    .file-info {
-      font-size: 0.8rem;
-      color: #666;
-      margin-top: 4px;
-    }
-    
-    /* 설정 메뉴 */
-    .settings-menu {
-      background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      margin: 20px 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .settings-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 0;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .settings-item:last-child {
-      border-bottom: none;
-    }
-    
-    .settings-item .label {
-      font-weight: 600;
-      color: #333;
-    }
-    
-    .settings-item .value {
-      color: #666;
-      font-size: 0.9rem;
-    }
-    
-    .settings-item .btn-small {
-      padding: 8px 16px;
-      font-size: 0.8rem;
-      border-radius: 6px;
-    }
-    
-    /* 이미지 확대 모달 */
-    .image-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      cursor: pointer;
-    }
-    
-    .image-modal.show {
-      display: flex;
-    }
-    
-    .modal-image {
-      max-width: 95%;
-      max-height: 95%;
-      object-fit: contain;
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    }
-    
-    .modal-close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 1.5rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .modal-close:active {
-      transform: scale(0.9);
-      background: rgba(255, 255, 255, 0.3);
-    }
-    
-    .image-hint {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    
-    .image-hint.show {
-      opacity: 1;
-    }
-    
-    /* 반응형 디자인 */
-    @media (max-width: 480px) {
-      .container {
-        padding: 16px;
-      }
-      
-      .title {
-        font-size: 1.6rem;
-        margin-bottom: 30px;
-      }
-      
-      .main-title {
-        font-size: 1.8rem;
-      }
-      
-      .logo-icon {
-        font-size: 2.5rem;
-      }
-      
-      .btn {
-        padding: 14px;
-        font-size: 1rem;
-      }
-      
-      .action-buttons {
-        max-width: 100%;
-        gap: 8px;
-      }
-      
-      .action-btn {
-        padding: 10px;
-        font-size: 0.8rem;
-      }
-      
-      .action-btn.nav {
-        font-size: 1rem;
-      }
-      
-      .note-img {
-        max-height: 350px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>벼락치기 오답노트</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffeb3b, #ffc107);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ff9800;
+        }
+
+        .title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff9800, #ff5722);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #2196f3, #1976d2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* 등록 화면 스타일 */
+        .register-screen {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .camera-container {
+            width: 100%;
+            height: 300px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .camera-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .camera-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .capture-btn {
+            background: #ff5722;
+            color: white;
+        }
+
+        .gallery-btn {
+            background: #2196f3;
+            color: white;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin: 10px 0;
+            resize: vertical;
+        }
+
+        .back-btn {
+            background: #666;
+            color: white;
+            margin-top: 20px;
+        }
+
+        /* 보기 화면 스타일 */
+        .view-screen {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .note-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 10px;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+
+        .note-text {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            min-height: 100px;
+            white-space: pre-wrap;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn {
+            background: #4caf50;
+            color: white;
+        }
+
+        .next-btn {
+            background: #2196f3;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .toggle-btn {
+            background: #ff9800;
+            color: white;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ff9800;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #f44336;
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .success {
+            color: #4caf50;
+            background: #e8f5e8;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="container" id="main-screen">
-    <div class="logo-container">
-      <div class="logo-icon">⚡</div>
-      <div class="main-title">벼락치기오답노트</div>
-      <div class="subtitle">시험 당일 나만의 벼락 오답노트</div>
-      <button class="settings-btn" onclick="showScreen('settings')">⚙️</button>
+    <!-- 메인 화면 -->
+    <div class="container" id="mainScreen">
+        <div class="logo">⚡</div>
+        <h1 class="title">벼락치기 오답노트</h1>
+        <button class="btn btn-primary" onclick="showRegisterScreen()">오답 등록하기</button>
+        <button class="btn btn-secondary" onclick="showViewScreen()">오답노트 보기</button>
     </div>
-    <button class="btn" onclick="showScreen('add')">오답 등록하기</button>
-    <button class="btn" onclick="showScreen('view')">오답노트 보기</button>
-  </div>
 
-  <div class="container hidden" id="add-screen">
-    <div class="title">오답 등록</div>
-    <div class="input-group">
-      <label>📷 이미지 업로드</label>
-      <input type="file" accept="image/*" id="img-input" onchange="previewImage(event)">
-      <div class="file-info">최대 5MB까지 업로드 가능합니다</div>
-    </div>
-    <img id="img-preview" class="preview-img hidden" />
-    <div class="input-group">
-      <label>✏️ 정답/오답 사유 등</label>
-      <textarea id="desc-input" placeholder="정답, 오답 사유 등 자유롭게 입력해주세요" maxlength="500"></textarea>
-    </div>
-    <button class="btn" id="save-btn" onclick="saveNote()" disabled>💾 저장</button>
-    <button class="btn secondary back-btn" onclick="showScreen('main')">← 뒤로가기</button>
-  </div>
-
-  <div class="container hidden" id="view-screen">
-    <div class="title">오답노트 보기</div>
-    <div class="note-viewer">
-      <div class="note-container">
-        <div class="swipe-area" id="swipe-area">
-          <img id="note-img" class="note-img" src="" alt="오답 이미지" onclick="openImageModal()" />
-          <div id="note-desc" class="note-desc hidden"></div>
-        </div>
-      </div>
-      <div class="action-buttons">
-        <button class="action-btn answer" id="answer-btn" onclick="toggleAnswer()">정답보기</button>
-        <button class="action-btn nav" id="prev-btn" onclick="prevNote()">‹</button>
-        <button class="action-btn nav" id="next-btn" onclick="nextNote()">›</button>
-        <button class="action-btn delete" id="delete-btn" onclick="deleteCurrentNote()" style="display: none;">노트삭제</button>
-      </div>
-    </div>
-    <button class="btn secondary back-btn" onclick="showScreen('main')">← 뒤로가기</button>
-  </div>
-
-  <div class="container hidden" id="settings-screen">
-    <div class="title">설정</div>
-    <div class="settings-menu">
-      <div class="settings-item">
-        <span class="label">📊 디버그 정보</span>
-        <span class="value" id="debug-info">로딩 중...</span>
-      </div>
-      <div class="settings-item">
-        <span class="label">🗑️ 모든 데이터 삭제</span>
-        <button class="btn btn-small danger" onclick="deleteAllData()">삭제</button>
-      </div>
-      <div class="settings-item">
-        <span class="label">ℹ️ 앱 정보</span>
-        <span class="value">v2.0</span>
-      </div>
-    </div>
-    <button class="btn secondary back-btn" onclick="showScreen('main')">← 뒤로가기</button>
-  </div>
-
-  <!-- 이미지 확대 모달 -->
-  <div class="image-modal" id="image-modal" onclick="closeImageModal()">
-    <button class="modal-close" onclick="closeImageModal()">✕</button>
-    <img id="modal-image" class="modal-image" src="" alt="확대된 이미지" />
-    <div class="image-hint" id="image-hint">확대된 이미지입니다</div>
-  </div>
-
-  <script>
-    // 디버그 로그 함수
-    function debugLog(message, data = null) {
-      console.log(`[DEBUG] ${message}`, data);
-      updateDebugInfo();
-    }
-
-    // 디버그 정보 업데이트
-    function updateDebugInfo() {
-      const debugInfo = document.getElementById('debug-info');
-      if (debugInfo) {
-        debugInfo.textContent = `노트 ${notes.length}개, DB: ${db ? '연결됨' : '연결 안됨'}`;
-      }
-    }
-
-    // 화면 전환
-    function showScreen(screen) {
-      document.getElementById('main-screen').classList.add('hidden');
-      document.getElementById('add-screen').classList.add('hidden');
-      document.getElementById('view-screen').classList.add('hidden');
-      document.getElementById('settings-screen').classList.add('hidden');
-      
-      if (screen === 'main') {
-        document.getElementById('main-screen').classList.remove('hidden');
-      } else if (screen === 'add') {
-        document.getElementById('add-screen').classList.remove('hidden');
-        resetAddForm();
-      } else if (screen === 'view') {
-        document.getElementById('view-screen').classList.remove('hidden');
-        showNote(currentNoteIdx);
-      } else if (screen === 'settings') {
-        document.getElementById('settings-screen').classList.remove('hidden');
-        updateDebugInfo();
-      }
-    }
-
-    // 오답노트 저장 (IndexedDB)
-    let notes = [];
-    let currentNoteIdx = 0;
-    let currentImageData = null;
-    let isAnswerVisible = false;
-    
-    // IndexedDB 설정
-    let db;
-    const dbName = 'ByerakNoteDB';
-    const dbVersion = 1;
-    const storeName = 'notes';
-
-    // IndexedDB 초기화
-    function initDB() {
-      return new Promise((resolve, reject) => {
-        debugLog('IndexedDB 초기화 시작');
-        const request = indexedDB.open(dbName, dbVersion);
+    <!-- 등록 화면 -->
+    <div class="register-screen" id="registerScreen">
+        <h2 class="title">오답 등록하기</h2>
         
-        request.onerror = () => {
-          debugLog('IndexedDB 초기화 실패', request.error);
-          reject(request.error);
-        };
-        
-        request.onsuccess = () => {
-          db = request.result;
-          debugLog('IndexedDB 초기화 성공', db);
-          resolve(db);
-        };
-        
-        request.onupgradeneeded = (event) => {
-          debugLog('IndexedDB 업그레이드 필요');
-          const db = event.target.result;
-          if (!db.objectStoreNames.contains(storeName)) {
-            const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
-            store.createIndex('date', 'date', { unique: false });
-            debugLog('ObjectStore 생성됨', storeName);
-          }
-        };
-      });
-    }
-
-    // IndexedDB에 노트 저장
-    async function saveNoteToDB(note) {
-      if (!db) {
-        debugLog('DB가 초기화되지 않음, 초기화 시도');
-        await initDB();
-      }
-      
-      return new Promise((resolve, reject) => {
-        debugLog('노트 저장 시작', note);
-        const transaction = db.transaction([storeName], 'readwrite');
-        const store = transaction.objectStore(storeName);
-        const request = store.add(note);
-        
-        request.onsuccess = () => {
-          debugLog('노트 저장 성공', request.result);
-          resolve(request.result);
-        };
-        
-        request.onerror = () => {
-          debugLog('노트 저장 실패', request.error);
-          reject(request.error);
-        };
-      });
-    }
-
-    // IndexedDB에서 모든 노트 가져오기
-    async function getAllNotesFromDB() {
-      if (!db) {
-        debugLog('DB가 초기화되지 않음, 초기화 시도');
-        await initDB();
-      }
-      
-      return new Promise((resolve, reject) => {
-        debugLog('모든 노트 가져오기 시작');
-        const transaction = db.transaction([storeName], 'readonly');
-        const store = transaction.objectStore(storeName);
-        const request = store.getAll();
-        
-        request.onsuccess = () => {
-          debugLog('모든 노트 가져오기 성공', request.result.length);
-          resolve(request.result);
-        };
-        
-        request.onerror = () => {
-          debugLog('모든 노트 가져오기 실패', request.error);
-          reject(request.error);
-        };
-      });
-    }
-
-    // IndexedDB에서 노트 삭제
-    async function deleteNoteFromDB(id) {
-      if (!db) {
-        debugLog('DB가 초기화되지 않음, 초기화 시도');
-        await initDB();
-      }
-      
-      return new Promise((resolve, reject) => {
-        debugLog('노트 삭제 시작', { id });
-        const transaction = db.transaction([storeName], 'readwrite');
-        const store = transaction.objectStore(storeName);
-        const request = store.delete(id);
-        
-        request.onsuccess = () => {
-          debugLog('노트 삭제 성공', { id });
-          resolve();
-        };
-        
-        request.onerror = () => {
-          debugLog('노트 삭제 실패', request.error);
-          reject(request.error);
-        };
-      });
-    }
-
-    // 모든 데이터 삭제
-    async function deleteAllData() {
-      if (confirm('모든 오답노트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-        try {
-          if (!db) await initDB();
-          
-          const transaction = db.transaction([storeName], 'readwrite');
-          const store = transaction.objectStore(storeName);
-          const request = store.clear();
-          
-          request.onsuccess = () => {
-            notes = [];
-            currentNoteIdx = 0;
-            alert('모든 데이터가 삭제되었습니다.');
-            showScreen('main');
-          };
-        } catch (e) {
-          alert('삭제 중 오류가 발생했습니다.');
-          console.error('전체 삭제 오류:', e);
-        }
-      }
-    }
-
-    // 저장소 용량 계산 (IndexedDB)
-    async function getStorageSize() {
-      if (!db) {
-        debugLog('DB가 초기화되지 않음, 초기화 시도');
-        await initDB();
-      }
-      
-      return new Promise((resolve) => {
-        const transaction = db.transaction([storeName], 'readonly');
-        const store = transaction.objectStore(storeName);
-        const request = store.getAll();
-        
-        request.onsuccess = () => {
-          let totalSize = 0;
-          request.result.forEach(note => {
-            totalSize += note.img.length + note.desc.length;
-          });
-          debugLog('저장소 크기 계산', { totalSize });
-          resolve(totalSize);
-        };
-      });
-    }
-
-    // 기존 localStorage에서 IndexedDB로 마이그레이션
-    async function migrateFromLocalStorage() {
-      try {
-        debugLog('localStorage 마이그레이션 시작');
-        const savedNotes = localStorage.getItem('byerakNotes');
-        if (savedNotes) {
-          const oldNotes = JSON.parse(savedNotes);
-          if (oldNotes.length > 0) {
-            debugLog('마이그레이션할 노트 수', oldNotes.length);
-            // IndexedDB에 저장
-            for (const note of oldNotes) {
-              await saveNoteToDB(note);
-            }
-            // localStorage 삭제
-            localStorage.removeItem('byerakNotes');
-            debugLog('마이그레이션 완료', oldNotes.length);
-          }
-        }
-      } catch (e) {
-        debugLog('마이그레이션 오류', e);
-        console.error('마이그레이션 오류:', e);
-      }
-    }
-    
-    function resetAddForm() {
-      document.getElementById('img-input').value = '';
-      document.getElementById('img-preview').classList.add('hidden');
-      document.getElementById('desc-input').value = '';
-      document.getElementById('save-btn').disabled = true;
-      currentImageData = null;
-    }
-    
-    async function saveNote() {
-      const desc = document.getElementById('desc-input').value.trim();
-      
-      if (!currentImageData || !desc) {
-        alert('이미지와 설명을 모두 입력해주세요!');
-        return;
-      }
-      
-      try {
-        // 저장소 용량 체크 (100MB로 확장)
-        const currentSize = await getStorageSize();
-        const newNoteSize = currentImageData.length;
-        
-        if (currentSize + newNoteSize > 100 * 1024 * 1024) { // 100MB 제한
-          alert('저장소 용량이 부족합니다. 일부 오답노트를 삭제해주세요.');
-          return;
-        }
-        
-        const newNote = { 
-          img: currentImageData, 
-          desc: desc,
-          date: new Date().toISOString()
-        };
-        
-        debugLog('새 노트 저장 시작', newNote);
-        const savedId = await saveNoteToDB(newNote);
-        newNote.id = savedId; // 저장된 ID 추가
-        notes.push(newNote);
-        
-        debugLog('노트 저장 완료', { id: savedId, totalNotes: notes.length });
-        alert('오답노트가 저장되었습니다!');
-        showScreen('main');
-      } catch (e) {
-        debugLog('저장 중 오류', e);
-        alert('저장 중 오류가 발생했습니다.');
-        console.error('저장 오류:', e);
-      }
-    }
-
-    // 이미지 압축 및 미리보기
-    function previewImage(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      
-      // 파일 크기 체크 (5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('파일 크기가 5MB를 초과합니다. 더 작은 이미지를 선택해주세요.');
-        event.target.value = '';
-        return;
-      }
-      
-      // 이미지 타입 체크
-      if (!file.type.startsWith('image/')) {
-        alert('이미지 파일만 업로드 가능합니다.');
-        event.target.value = '';
-        return;
-      }
-      
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          // 이미지 압축
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          
-          // 최대 크기 설정 (화질 개선)
-          const maxWidth = 1200;
-          const maxHeight = 900;
-          let { width, height } = img;
-          
-          if (width > height) {
-            if (width > maxWidth) {
-              height = height * (maxWidth / width);
-              width = maxWidth;
-            }
-          } else {
-            if (height > maxHeight) {
-              width = width * (maxHeight / height);
-              height = maxHeight;
-            }
-          }
-          
-          canvas.width = width;
-          canvas.height = height;
-          
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          // 원본 품질 유지 (최고 화질)
-          const compressedData = canvas.toDataURL('image/jpeg', 1.0);
-          currentImageData = compressedData;
-          
-          // 미리보기 표시
-          const previewImg = document.getElementById('img-preview');
-          previewImg.src = compressedData;
-          previewImg.classList.remove('hidden');
-          
-          // 저장 버튼 활성화 체크
-          checkSaveButton();
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-    
-    function checkSaveButton() {
-      const desc = document.getElementById('desc-input').value.trim();
-      const saveBtn = document.getElementById('save-btn');
-      saveBtn.disabled = !(currentImageData && desc);
-    }
-    
-    // 텍스트 입력 시 저장 버튼 활성화 체크
-    document.getElementById('desc-input').addEventListener('input', checkSaveButton);
-
-    // 오답노트 보기
-    function showNote(idx) {
-      const deleteBtn = document.getElementById('delete-btn');
-      const answerBtn = document.getElementById('answer-btn');
-      const noteImg = document.getElementById('note-img');
-      const noteDesc = document.getElementById('note-desc');
-      
-      debugLog('노트 표시 시작', { idx, totalNotes: notes.length });
-      
-              if (notes.length === 0) {
-          // 빈 상태 화면 표시
-          noteImg.style.display = 'none';
-          
-          noteDesc.innerHTML = `
-            <div class="empty-state">
-              <div class="empty-icon">📖</div>
-              <div style="font-size: 1.2rem; font-weight: 600; color: #333; margin-bottom: 8px;">
-                등록된 오답노트가 없습니다
-              </div>
-              <div style="font-size: 0.9rem; color: #666; margin-bottom: 30px;">
-                오답노트를 추가하여 오답을 관리해 보세요
-              </div>
-              <button class="btn" onclick="showScreen('add')" style="margin-bottom: 15px;">
-                오답등록하기
-              </button>
+        <div class="camera-container" id="cameraContainer">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
+            <div id="cameraPlaceholder" style="text-align: center; color: #666;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">📷</div>
+                <div>카메라를 시작하려면 버튼을 클릭하세요</div>
             </div>
-          `;
-          noteDesc.classList.remove('hidden');
+        </div>
+
+        <div class="camera-buttons">
+            <button class="camera-btn capture-btn" onclick="startCamera()">촬영하기</button>
+            <button class="camera-btn gallery-btn" onclick="selectFromGallery()">갤러리에서 선택</button>
+        </div>
+
+        <textarea class="text-input" id="noteText" placeholder="정답, 오답 사유 등을 입력하세요..." rows="4"></textarea>
         
-        // 모든 액션 버튼 숨기기
-        document.getElementById('prev-btn').style.display = 'none';
-        document.getElementById('next-btn').style.display = 'none';
-        deleteBtn.style.display = 'none';
-        answerBtn.style.display = 'none';
-        debugLog('노트가 없음 - 디폴트 화면 표시');
-        return;
-      }
-      
-      if (idx < 0) idx = 0;
-      if (idx >= notes.length) idx = notes.length - 1;
-      
-      currentNoteIdx = idx;
-      const currentNote = notes[idx];
-      debugLog('현재 노트 정보', { id: currentNote.id, index: idx });
-      
-                    // 실제 노트 이미지 표시
-      noteImg.src = currentNote.img;
-      noteImg.style.display = 'block';
-      noteImg.style.cursor = 'pointer';
-      noteImg.onclick = openImageModal; // 클릭 이벤트 복원
-      
-      noteDesc.innerText = currentNote.desc;
-      noteDesc.classList.add('hidden');
-      
-      // 버튼들 표시 (노트가 있을 때만)
-      document.getElementById('prev-btn').style.display = 'block';
-      document.getElementById('next-btn').style.display = 'block';
-      document.getElementById('prev-btn').disabled = idx === 0;
-      document.getElementById('next-btn').disabled = idx === notes.length - 1;
-      
-      // 버튼들 표시
-      deleteBtn.style.display = 'block';
-      answerBtn.style.display = 'block';
-      
-      // 정답보기 상태 초기화
-      isAnswerVisible = false;
-      answerBtn.textContent = '정답보기';
-      
-      debugLog('노트 표시 완료', { currentIndex: idx });
-    }
-    
-    function prevNote() { 
-      showNote(currentNoteIdx - 1); 
-    }
-    
-    function nextNote() { 
-      showNote(currentNoteIdx + 1); 
-    }
+        <button class="btn btn-primary" onclick="saveNote()">저장</button>
+        <button class="btn back-btn" onclick="showMainScreen()">뒤로가기</button>
 
-    // 정답보기 토글 기능
-    function toggleAnswer() {
-      if (notes.length === 0) return;
-      
-      const descElement = document.getElementById('note-desc');
-      const answerBtn = document.getElementById('answer-btn');
-      
-      isAnswerVisible = !isAnswerVisible;
-      
-      if (isAnswerVisible) {
-        descElement.classList.remove('hidden');
-        answerBtn.textContent = '정답숨기기';
-      } else {
-        descElement.classList.add('hidden');
-        answerBtn.textContent = '정답보기';
-      }
-    }
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>처리 중...</div>
+        </div>
 
-    // 이미지 확대 모달 기능
-    function openImageModal() {
-      if (notes.length === 0) return;
-      
-      const modal = document.getElementById('image-modal');
-      const modalImage = document.getElementById('modal-image');
-      const hint = document.getElementById('image-hint');
-      
-      modalImage.src = notes[currentNoteIdx].img;
-      modal.classList.add('show');
-      
-      // 힌트 표시
-      setTimeout(() => {
-        hint.classList.add('show');
-        setTimeout(() => {
-          hint.classList.remove('show');
-        }, 2000);
-      }, 500);
-    }
-    
-    function closeImageModal() {
-      const modal = document.getElementById('image-modal');
-      modal.classList.remove('show');
-    }
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+    </div>
 
-    // 삭제 기능 (수정됨)
-    async function deleteCurrentNote() {
-      if (notes.length === 0) {
-        debugLog('삭제할 노트가 없음');
-        return;
-      }
-      
-      const noteToDelete = notes[currentNoteIdx];
-      debugLog('삭제 시작', { id: noteToDelete.id, index: currentNoteIdx });
-      
-      if (confirm('이 오답노트를 삭제하시겠습니까?')) {
-        try {
-          // DB에서 삭제
-          await deleteNoteFromDB(noteToDelete.id);
-          debugLog('DB에서 삭제 완료');
-          
-          // 메모리에서 삭제
-          notes.splice(currentNoteIdx, 1);
-          debugLog('메모리에서 삭제 완료', { remainingNotes: notes.length });
-          
-          // UI 업데이트
-          if (notes.length === 0) {
-            // 모든 노트가 삭제된 경우
-            debugLog('모든 노트 삭제됨');
-            showNote(0);
-          } else {
-            // 삭제 후 적절한 인덱스로 이동
-            if (currentNoteIdx >= notes.length) {
-              currentNoteIdx = notes.length - 1;
+    <!-- 보기 화면 -->
+    <div class="view-screen" id="viewScreen">
+        <h2 class="title">오답노트 보기</h2>
+        
+        <div id="noteContainer">
+            <img id="noteImage" class="note-image" style="display: none;" onclick="toggleFullscreen()">
+            <div id="noteTextDisplay" class="note-text" style="display: none;"></div>
+        </div>
+
+        <div class="navigation-buttons">
+            <button class="nav-btn prev-btn" onclick="previousNote()">이전</button>
+            <button class="nav-btn next-btn" onclick="nextNote()">다음</button>
+        </div>
+
+        <div class="navigation-buttons">
+            <button class="nav-btn toggle-btn" onclick="toggleText()">정답보기</button>
+            <button class="nav-btn delete-btn" onclick="deleteNote()">오답삭제</button>
+        </div>
+
+        <button class="btn back-btn" onclick="showMainScreen()">뒤로가기</button>
+
+        <div class="loading" id="viewLoading">
+            <div class="spinner"></div>
+            <div>로딩 중...</div>
+        </div>
+    </div>
+
+    <script>
+        let currentNotes = [];
+        let currentNoteIndex = 0;
+        let stream = null;
+        let capturedImage = null;
+
+        // IndexedDB 설정
+        const dbName = 'ByerakNoteDB';
+        const dbVersion = 1;
+        const storeName = 'notes';
+
+        // 데이터베이스 초기화
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(dbName, dbVersion);
+                
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => resolve(request.result);
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(storeName)) {
+                        const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('timestamp', 'timestamp', { unique: false });
+                    }
+                };
+            });
+        }
+
+        // 메인 화면 표시
+        function showMainScreen() {
+            document.getElementById('mainScreen').style.display = 'block';
+            document.getElementById('registerScreen').style.display = 'none';
+            document.getElementById('viewScreen').style.display = 'none';
+        }
+
+        // 등록 화면 표시
+        function showRegisterScreen() {
+            document.getElementById('mainScreen').style.display = 'none';
+            document.getElementById('registerScreen').style.display = 'block';
+            document.getElementById('viewScreen').style.display = 'none';
+            
+            // 입력 필드 초기화
+            document.getElementById('noteText').value = '';
+            capturedImage = null;
+            document.getElementById('cameraPlaceholder').style.display = 'block';
+            document.getElementById('video').style.display = 'none';
+        }
+
+        // 보기 화면 표시
+        function showViewScreen() {
+            document.getElementById('mainScreen').style.display = 'none';
+            document.getElementById('registerScreen').style.display = 'none';
+            document.getElementById('viewScreen').style.display = 'block';
+            
+            loadNotes();
+        }
+
+        // 카메라 시작
+        async function startCamera() {
+            try {
+                const video = document.getElementById('video');
+                const placeholder = document.getElementById('cameraPlaceholder');
+                
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                
+                video.srcObject = stream;
+                video.style.display = 'block';
+                placeholder.style.display = 'none';
+                
+            } catch (error) {
+                showError('카메라에 접근할 수 없습니다: ' + error.message);
             }
-            debugLog('다음 노트 표시', { newIndex: currentNoteIdx });
-            showNote(currentNoteIdx);
-          }
-          
-          alert('오답노트가 삭제되었습니다.');
-        } catch (e) {
-          debugLog('삭제 중 오류', e);
-          alert('삭제 중 오류가 발생했습니다.');
-          console.error('삭제 오류:', e);
         }
-      }
-    }
 
-    // 터치 제스처 지원
-    let startX = 0;
-    let startY = 0;
-    let isSwiping = false;
-    
-    document.getElementById('swipe-area').addEventListener('touchstart', function(e) {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      isSwiping = false;
-    });
-    
-    document.getElementById('swipe-area').addEventListener('touchmove', function(e) {
-      if (notes.length === 0) return;
-      
-      const currentY = e.touches[0].clientY;
-      const diffY = startY - currentY;
-      
-      // 위로 스와이프 감지 (삭제 제스처)
-      if (diffY > 50) {
-        isSwiping = true;
-        document.getElementById('note-img').classList.add('swipe-to-delete');
-      }
-    });
-    
-    document.getElementById('swipe-area').addEventListener('touchend', function(e) {
-      if (notes.length === 0) return;
-      
-      const endX = e.changedTouches[0].clientX;
-      const endY = e.changedTouches[0].clientY;
-      const diffX = startX - endX;
-      const diffY = startY - endY;
-      
-      // 위로 스와이프 삭제
-      if (isSwiping && diffY > 100) {
-        deleteCurrentNote();
-        document.getElementById('note-img').classList.remove('swipe-to-delete');
-        return;
-      }
-      
-      // 수평 스와이프 (노트 넘기기)
-      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-        if (diffX > 0) {
-          // 왼쪽으로 스와이프 (다음 노트)
-          if (currentNoteIdx < notes.length - 1) {
-            nextNote();
-          }
-        } else {
-          // 오른쪽으로 스와이프 (이전 노트)
-          if (currentNoteIdx > 0) {
-            prevNote();
-          }
+        // 사진 촬영
+        function capturePhoto() {
+            if (!stream) {
+                showError('먼저 카메라를 시작해주세요.');
+                return;
+            }
+
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0);
+
+            canvas.toBlob((blob) => {
+                capturedImage = blob;
+                showSuccess('사진이 촬영되었습니다!');
+                
+                // 카메라 중지
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                
+                document.getElementById('video').style.display = 'none';
+                document.getElementById('cameraPlaceholder').style.display = 'block';
+            }, 'image/jpeg', 0.8);
         }
-      }
-      
-      // 스와이프 효과 제거
-      document.getElementById('note-img').classList.remove('swipe-to-delete');
-    });
 
-    // PWA 서비스 워커 등록
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then((registration) => {
-            debugLog('SW 등록 성공', registration.scope);
-          })
-          .catch((error) => {
-            debugLog('SW 등록 실패', error);
-          });
-      });
-    }
+        // 갤러리에서 선택
+        function selectFromGallery() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'environment';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    capturedImage = file;
+                    showSuccess('이미지가 선택되었습니다!');
+                }
+            };
+            
+            input.click();
+        }
 
-    // 페이지 로드 시 저장된 데이터 불러오기
-    window.addEventListener('load', async function() {
-      try {
-        debugLog('페이지 로드 시작');
-        
-        // IndexedDB 초기화
-        await initDB();
-        
-        // 기존 localStorage 데이터 마이그레이션
-        await migrateFromLocalStorage();
-        
-        // IndexedDB에서 데이터 불러오기
-        notes = await getAllNotesFromDB();
-        
-        debugLog('데이터 로드 완료', { noteCount: notes.length });
-        updateDebugInfo();
-      } catch (e) {
-        debugLog('데이터 로드 오류', e);
-        console.error('저장된 데이터를 불러오는 중 오류:', e);
-        notes = [];
-        updateDebugInfo();
-      }
-    });
-  </script>
+        // 노트 저장
+        async function saveNote() {
+            if (!capturedImage) {
+                showError('이미지를 촬영하거나 선택해주세요.');
+                return;
+            }
+
+            const text = document.getElementById('noteText').value.trim();
+            if (!text) {
+                showError('텍스트를 입력해주세요.');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const db = await initDB();
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+
+                const note = {
+                    image: capturedImage,
+                    text: text,
+                    timestamp: Date.now()
+                };
+
+                await new Promise((resolve, reject) => {
+                    const request = store.add(note);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+
+                hideLoading();
+                showSuccess('오답노트가 저장되었습니다!');
+                
+                // 입력 필드 초기화
+                document.getElementById('noteText').value = '';
+                capturedImage = null;
+                
+                setTimeout(() => {
+                    showMainScreen();
+                }, 1500);
+
+            } catch (error) {
+                hideLoading();
+                showError('저장 중 오류가 발생했습니다: ' + error.message);
+            }
+        }
+
+        // 노트 로드
+        async function loadNotes() {
+            showViewLoading();
+
+            try {
+                const db = await initDB();
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.getAll();
+
+                await new Promise((resolve, reject) => {
+                    request.onsuccess = () => {
+                        currentNotes = request.result;
+                        currentNoteIndex = 0;
+                        resolve();
+                    };
+                    request.onerror = () => reject(request.error);
+                });
+
+                hideViewLoading();
+                
+                if (currentNotes.length === 0) {
+                    document.getElementById('noteContainer').innerHTML = '<div style="text-align: center; color: #666; padding: 40px;">저장된 오답노트가 없습니다.</div>';
+                } else {
+                    displayCurrentNote();
+                }
+
+            } catch (error) {
+                hideViewLoading();
+                showError('노트를 불러오는 중 오류가 발생했습니다: ' + error.message);
+            }
+        }
+
+        // 현재 노트 표시
+        function displayCurrentNote() {
+            if (currentNotes.length === 0) return;
+
+            const note = currentNotes[currentNoteIndex];
+            const image = document.getElementById('noteImage');
+            const text = document.getElementById('noteTextDisplay');
+
+            // 이미지 표시
+            const url = URL.createObjectURL(note.image);
+            image.src = url;
+            image.style.display = 'block';
+
+            // 텍스트 숨김 상태로 시작
+            text.textContent = note.text;
+            text.style.display = 'none';
+        }
+
+        // 이전 노트
+        function previousNote() {
+            if (currentNoteIndex > 0) {
+                currentNoteIndex--;
+                displayCurrentNote();
+            }
+        }
+
+        // 다음 노트
+        function nextNote() {
+            if (currentNoteIndex < currentNotes.length - 1) {
+                currentNoteIndex++;
+                displayCurrentNote();
+            }
+        }
+
+        // 텍스트 토글
+        function toggleText() {
+            const text = document.getElementById('noteTextDisplay');
+            text.style.display = text.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // 노트 삭제
+        async function deleteNote() {
+            if (currentNotes.length === 0) return;
+
+            if (!confirm('이 오답노트를 삭제하시겠습니까?')) return;
+
+            const note = currentNotes[currentNoteIndex];
+
+            try {
+                const db = await initDB();
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                
+                await new Promise((resolve, reject) => {
+                    const request = store.delete(note.id);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+
+                // 현재 노트 제거
+                currentNotes.splice(currentNoteIndex, 1);
+
+                if (currentNotes.length === 0) {
+                    document.getElementById('noteContainer').innerHTML = '<div style="text-align: center; color: #666; padding: 40px;">저장된 오답노트가 없습니다.</div>';
+                } else {
+                    if (currentNoteIndex >= currentNotes.length) {
+                        currentNoteIndex = currentNotes.length - 1;
+                    }
+                    displayCurrentNote();
+                }
+
+                showSuccess('오답노트가 삭제되었습니다!');
+
+            } catch (error) {
+                showError('삭제 중 오류가 발생했습니다: ' + error.message);
+            }
+        }
+
+        // 전체화면 토글
+        function toggleFullscreen() {
+            const image = document.getElementById('noteImage');
+            if (image.requestFullscreen) {
+                image.requestFullscreen();
+            } else if (image.webkitRequestFullscreen) {
+                image.webkitRequestFullscreen();
+            } else if (image.msRequestFullscreen) {
+                image.msRequestFullscreen();
+            }
+        }
+
+        // 유틸리티 함수들
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showViewLoading() {
+            document.getElementById('viewLoading').style.display = 'block';
+        }
+
+        function hideViewLoading() {
+            document.getElementById('viewLoading').style.display = 'none';
+        }
+
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = message;
+            error.style.display = 'block';
+            setTimeout(() => {
+                error.style.display = 'none';
+            }, 3000);
+        }
+
+        function showSuccess(message) {
+            const success = document.getElementById('success');
+            success.textContent = message;
+            success.style.display = 'block';
+            setTimeout(() => {
+                success.style.display = 'none';
+            }, 3000);
+        }
+
+        // 터치 제스처 지원
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (document.getElementById('viewScreen').style.display === 'block') {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                const diffX = touchStartX - touchEndX;
+                const diffY = touchStartY - touchEndY;
+
+                // 좌우 스와이프로 노트 이동
+                if (Math.abs(diffX) > 50 && Math.abs(diffY) < 100) {
+                    if (diffX > 0) {
+                        nextNote();
+                    } else {
+                        previousNote();
+                    }
+                }
+
+                // 위로 스와이프로 삭제
+                if (diffY > 50 && Math.abs(diffX) < 100) {
+                    deleteNote();
+                }
+            }
+        });
+
+        // 앱 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            initDB().catch(error => {
+                console.error('데이터베이스 초기화 오류:', error);
+            });
+        });
+    </script>
 </body>
 </html> 
-
