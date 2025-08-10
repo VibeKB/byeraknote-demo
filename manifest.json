@@ -1,41 +1,35 @@
 {
-  "name": "벼락치기오답노트",
-  "short_name": "벼락오답노트",
-  "description": "빠르게 정리하는 나만의 오답노트 - 학습 효율을 높이는 스마트 오답노트 앱",
-  "start_url": "/",
+  "name": "벼락치기 오답노트",
+  "short_name": "오답노트",
+  "description": "벼락치기 오답노트 - 빠르고 효율적인 학습을 위한 오답노트 앱",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffc107",
+  "background_color": "#ffeb3b",
+  "theme_color": "#ff9800",
   "orientation": "portrait",
-  "scope": "/",
-  "lang": "ko",
-  "dir": "ltr",
-  "categories": ["education", "productivity", "utilities"],
+  "scope": "./",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiNmZmViM2IiLz4KPHBhdGggZD0iTTk2IDQ4QzY0IDQ4IDM2IDY0IDM2IDg4QzM2IDEwNCA0OCAxMTYgNjQgMTI4QzQ4IDE0MCAzNiAxNTIgMzYgMTY4QzM2IDE5MiA2NCAyMDggOTYgMjA4QzEyOCAyMDggMTU2IDE5MiAxNTYgMTY4QzE1NiAxNTIgMTQ0IDE0MCAxMjggMTI4QzE0NCAxMTYgMTU2IDEwNCAxNTYgODhDMTU2IDY0IDEyOCA0OCA5NiA0OFoiIGZpbGw9IiNmZjk4MDAiLz4KPC9zdmc+",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/svg+xml"
     },
     {
-      "src": "icon-512.png",
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iNjQiIGZpbGw9IiNmZmViM2IiLz4KPHBhdGggZD0iTTI1NiAxMjhDMTcwIDEyOCA5NiAxNzAgOTYgMjM0QzEwNCAyNzggMTI4IDMxMCAxNzAgMzQyQzEyOCAzNzQgMTA0IDQwNiA5NiA0NTBDOTYgNTE0IDE3MCA1NTYgMjU2IDU1NkMzNDIgNTU2IDQxNiA1MTQgNDE2IDQ1MEM0MDggNDA2IDM4NCAzNzQgMzQyIDM0MkMzODQgMzEwIDQwOCAyNzggNDE2IDIzNEM0MTYgMTcwIDM0MiAxMjggMjU2IDEyOFoiIGZpbGw9IiNmZjk4MDAiLz4KPC9zdmc+",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/svg+xml"
     }
   ],
+  "categories": ["education", "productivity"],
+  "lang": "ko",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "related_applications": [],
   "screenshots": [
     {
-      "src": "screenshot-1.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
-    {
-      "src": "screenshot-2.png",
-      "sizes": "750x1334",
-      "type": "image/png",
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzc1IiBoZWlnaHQ9IjgxMiIgdmlld0JveD0iMCAwIDM3NSA4MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzNzUiIGhlaWdodD0iODEyIiByeD0iMjAiIGZpbGw9IiNmZmViM2IiLz4KPHJlY3QgeD0iMjAiIHk9IjIwIiB3aWR0aD0iMzM1IiBoZWlnaHQ9Ijc3MiIgcng9IjE1IiBmaWxsPSJ3aGl0ZSIvPgo8dGV4dCB4PSIxODcuNSIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMzMzIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7snbTqs6DtlZzsnYwg7YWM7Iqk7Yq567OE7Yq4PC90ZXh0Pgo8dGV4dCB4PSIxODcuNSIgeT0iMTgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuyduOqzoO2VnOydtCDthYzsirTtip3ruYQg7YWM7Iqk7Yq567OE7Yq4PC90ZXh0Pgo8L3N2Zz4=",
+      "sizes": "375x812",
+      "type": "image/svg+xml",
       "form_factor": "narrow"
     }
   ],
@@ -44,10 +38,10 @@
       "name": "오답 등록",
       "short_name": "등록",
       "description": "새로운 오답노트 등록",
-      "url": "/?action=add",
+      "url": "./index.html?action=register",
       "icons": [
         {
-          "src": "shortcut-add.png",
+          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMTIiIGZpbGw9IiNmZmViM2IiLz4KPHBhdGggZD0iTTQ4IDI0QzQwIDI0IDMyIDMyIDMyIDQwQzMyIDQ4IDQwIDU2IDQ4IDU2QzU2IDU2IDY0IDQ4IDY0IDQwQzY0IDMyIDU2IDI0IDQ4IDI0WiIgZmlsbD0iI2ZmOTgwMCIvPgo8cGF0aCBkPSJNNDggNjRDMzIgNjQgMjAgNzYgMjAgOTJDMjAgMTA4IDMyIDEyMCA0OCAxMjBDNjQgMTIwIDc2IDEwOCA3NiA5MkM3NiA3NiA2NCA2NCA0OCA2NFoiIGZpbGw9IiNmZjk4MDAiLz4KPC9zdmc+",
           "sizes": "96x96"
         }
       ]
@@ -55,19 +49,14 @@
     {
       "name": "오답노트 보기",
       "short_name": "보기",
-      "description": "저장된 오답노트 확인",
-      "url": "/?action=view",
+      "description": "저장된 오답노트 보기",
+      "url": "./index.html?action=view",
       "icons": [
         {
-          "src": "shortcut-view.png",
+          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMTIiIGZpbGw9IiNmZmViM2IiLz4KPHBhdGggZD0iTTQ4IDI0QzMyIDI0IDIwIDM2IDIwIDQ4QzIwIDYwIDMyIDcyIDQ4IDcyQzY0IDcyIDc2IDYwIDc2IDQ4Qzc2IDM2IDY0IDI0IDQ4IDI0WiIgZmlsbD0iI2ZmOTgwMCIvPgo8cGF0aCBkPSJNNDggODBDMzIgODAgMjAgOTIgMjAgMTA0QzIwIDExNiAzMiAxMjggNDggMTI4QzY0IDEyOCA3NiAxMTYgNzYgMTA0Qzc2IDkyIDY0IDgwIDQ4IDgwWiIgZmlsbD0iI2ZmOTgwMCIvPgo8L3N2Zz4=",
           "sizes": "96x96"
         }
       ]
     }
-  ],
-  "related_applications": [],
-  "prefer_related_applications": false,
-  "edge_side_panel": {
-    "preferred_width": 400
-  }
-}
+  ]
+} 
